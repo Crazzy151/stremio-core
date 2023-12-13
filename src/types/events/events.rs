@@ -1,3 +1,4 @@
+use chrono::{DateTime, Utc, Local};
 use serde::Serialize;
 
 use crate::{
@@ -5,8 +6,24 @@ use crate::{
     types::api::{GetModalResponse, GetNotificationResponse},
 };
 
-#[derive(Default, PartialEq, Eq, Serialize, Clone, Debug)]
+#[derive(PartialEq, Eq, Serialize, Clone, Debug)]
 pub struct Events {
-    pub modal: Loadable<Option<GetModalResponse>, CtxError>,
-    pub notification: Loadable<Option<GetNotificationResponse>, CtxError>,
+    pub modal: ModalEvent,
+    pub notification: NotificationEvent,
+}
+
+#[derive(PartialEq, Eq, Serialize, Clone, Debug)]
+pub struct NotificationEvent {
+    /// the notification contains the date that was sent with the request to retrieve the latest Notification
+    pub notification: Loadable<(DateTime<Local>, Option<GetNotificationResponse>), CtxError>,
+    pub last_updated: Option<DateTime<Utc>>,
+    pub dismissed: bool,
+}
+
+#[derive(PartialEq, Eq, Serialize, Clone, Debug)]
+pub struct ModalEvent {
+    /// the modal contains the date that was sent with the request to retrieve the latest Modal
+    pub modal: Loadable<(DateTime<Local>, Option<GetModalResponse>), CtxError>,
+    pub last_updated: Option<DateTime<Utc>>,
+    pub dismissed: bool,
 }
